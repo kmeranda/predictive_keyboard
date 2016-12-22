@@ -1,6 +1,13 @@
 import random
 import re
 import tkinter as tk
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-t', '--trainfile', help='Name of file to train on', default='data/english/train')
+parser.add_argument('-d', '--delta', help='Delta value used in Witten-Bell smoothing', default=0.01)
+parser.add_argument('-n', '--ngrams', help='Number of grams to use in this model', default=10)
+args = parser.parse_args()
 
 class Uniform(object):
 	"""Barebones example of a language model class."""
@@ -42,11 +49,11 @@ class CharacterBased(object):
 
 	def __init__(self):
 		self.vocab = set()
-		self.gram_len = 9
+		self.gram_len = int(args.ngrams) - 1
 		self.state = "<s>"*self.gram_len
 		self.model = {}	# dict (n-gram) of dict (gram as you see them) of counts
 		self.n_1plus = {}
-		self.delta = 0.01
+		self.delta = float(args.delta)
 
 	def true_len(self, s):
 		count = s.count("<s>")
@@ -292,15 +299,14 @@ class Application(tk.Frame):
 		self.press(w)
 
 if __name__ == "__main__":
-	import argparse
+	#import argparse
 
-	parser = argparse.ArgumentParser()
-	parser.add_argument(dest='train')
-	args = parser.parse_args()
+	#parser = argparse.ArgumentParser()
+	#parser.add_argument(dest='train')
+	#args = parser.parse_args()
 
-	##### Replace this line with an instantiation of your model #####
 	m = CharacterBased()
-	m.train(args.train)
+	m.train(args.trainfile)
 	m.start()
 
 	root = tk.Tk()
